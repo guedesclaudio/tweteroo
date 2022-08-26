@@ -2,82 +2,56 @@ import express from "express"
 import cors from "cors"
 
 const server = express()
-server.use(cors())
+server
+.use(cors())
+.use(express.json())
 
-const DB_USER = [
-    {
-        username: "bobesponja",
-        avatar: "bobesponja AVATAR"
-    },
-    {
-        username: "patrick",
-        avatar: "patrick AVATAR"
-    },
-    {
-        username: "lula",
-        avatar: "lula AVATAR"
-    },
-]
-const DB_TWEETS = [
-    {
-        username: "bobesponja",
-        tweet: "1"
-    },
-    {
-        username: "lula",
-        tweet: "2"
-    },
-    {
-        username: "bobesponja",
-        tweet: "3"
-    },
-    {
-        username: "patrick",
-        tweet: "4"
-    },
-    {
-        username: "bobesponja",
-        tweet: "5"
-    },
-    {
-        username: "patrick",
-        tweet: "6"
-    },
-    {
-        username: "lula",
-        tweet: "7"
-    },
-    {
-        username: "bobesponja",
-        tweet: "8"
-    },
-    {
-        username: "lula",
-        tweet: "9"
-    },
-    {
-        username: "bobesponja",
-        tweet: "10"
-    },
-    {
-        username: "bobesponja",
-        tweet: "11"
-    },
-    {
-        username: "patrick",
-        tweet: "12"
-    },
+const DB_USER = []
+const DB_TWEETS = []
 
-]
-
-server.get("/tweets", (req, res) => {
-    DB_TWEETS.forEach(tweet => {
-        const user = DB_USER.find(value => tweet.username === value.username)
-        if (user) {
-            tweet.avatar = user.avatar
-        }
-    })
-    res.send(DB_TWEETS.reverse().slice(0,10))
+server.post("/sign-up", (req, res) => {
+    const newUser = req.body
+    
+    if(newUser.username.length === 0 || newUser.avatar.length === 0) {
+        res
+        .status(400)
+        .send("Todos os campos são obrigatórios!")
+    }
+    else {
+        DB_USER.push(newUser)
+        res
+        .status(201)
+        .send("OK")
+    }
 })
 
-server.listen(5000, () => {console.log("Listen on 5000")})
+server.post("/tweets", (req, res) => {
+    const newTweet = req.body
+
+    if(newTweet.username.length === 0 || newTweet.tweet.length === 0) {
+        res
+        .status(400)
+        .send("Todos os campos são obrigatórios!")
+    }
+    else {
+        DB_TWEETS.push(newTweet)
+        res
+        .status(201)
+        .send("OK")
+    }
+})
+
+server.get("/tweets", (req, res) => {
+    if(DB_TWEETS.length > 0) {
+        DB_TWEETS.forEach(tweet => {
+            const user = DB_USER.find(value => tweet.username === value.username)
+            tweet.avatar = user.avatar
+        })
+    }
+    const lastTweets = DB_TWEETS.length >= 10 ?
+    DB_TWEETS.slice(DB_TWEETS.length-10, DB_TWEETS.length) :
+    DB_TWEETS
+    res.send(lastTweets)
+})
+
+server.listen(5000, () => {console.log("Listening on port 5000")})
