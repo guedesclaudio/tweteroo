@@ -10,11 +10,24 @@ server
 const DB_USER = []
 const DB_TWEETS = []
 
+function checkUrl(userUrl) {
+    try {
+        let url = new URL(userUrl)
+        return true
+    } 
+    catch(err) {
+       return false
+    }
+ }
+
 server.post("/sign-up", (req, res) => {
     const {username, avatar} = req.body
     
     if(!username || !avatar) {
         return res.status(400).send("Todos os campos são obrigatórios!")
+    }
+    if(checkUrl(avatar) === false) {
+        return res.status(400).send("Url inválida")
     }
     if(DB_USER.find(value => value.username === username)) {
         return res.status(409).send("Já existe um usuário com esse nome")
