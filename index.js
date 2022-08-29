@@ -33,7 +33,6 @@ server.post("/tweets", (req, res) => {
     }
 
     DB_TWEETS.push({username, tweet})
-    console.log(DB_TWEETS)
     res.status(201).send("OK")
 })
 
