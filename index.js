@@ -2,6 +2,7 @@ import express from "express"
 import cors from "cors"
 
 const server = express()
+
 server
 .use(cors())
 .use(express.json())
@@ -57,7 +58,7 @@ server.get("/tweets", (req, res) => {
 server.get("/tweets/:username", (req, res) => {
     const {username} = req.params
     const filtredTweets = DB_TWEETS.find(value => value.username === username)
-    
+
     res.send(filtredTweets)
 })
 
